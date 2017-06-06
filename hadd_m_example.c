@@ -43,16 +43,16 @@ int main(int argc, char* argv[]) {
 		printf("gpu_C: %s\n", cudaGetErrorString(status));
 	}
 	if ((status = cudaMemcpy(gpu_A, A, sizeof(A), cudaMemcpyHostToDevice)) != 0) {
-		printf("memcpy gpu_A -> A: %s\n", cudaGetErrorString(status));
+		printf("memcpy A -> gpu_A: %s\n", cudaGetErrorString(status));
 	}
 	if ((status = cudaMemcpy(gpu_B, B, sizeof(B), cudaMemcpyHostToDevice)) != 0) {
-		printf("memcpy gpu_B -> B: %s\n", cudaGetErrorString(status));
+		printf("memcpy B -> gpu_B: %s\n", cudaGetErrorString(status));
 	}
 
 	hadd_m(gpu_A, gpu_B, gpu_C);
 
 	if ((status = cudaMemcpy(C, gpu_C, sizeof(C), cudaMemcpyDeviceToHost)) != 0) {
-		printf("memcpy C -> gpu_C: %s\n", cudaGetErrorString(status));
+		printf("memcpy gpu_C -> C: %s\n", cudaGetErrorString(status));
 	}
 	for (int m = 0; m < 2; m++) {
 		for (int n = 0; n < 3; n++) {
