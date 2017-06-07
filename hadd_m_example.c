@@ -29,8 +29,8 @@ int main(int argc, char* argv[]) {
 	__half* gpu_A;
 	__half* gpu_B;
 	__half* gpu_C;
-	__half A[6] = {1, 1, 1, 1, 1, 1};
-	__half B[6] = {0, 1, 2, 3, 4, 5};
+	unsigned short A[6] = {0x3c00, 0x3c00, 0x3c00, 0x3c00, 0x3c00, 0x3c00};
+	unsigned short B[6] = {0x0000, 0x3c00, 0x4000, 0x4200, 0x4400, 0x4500};
 	__half C[6];
 	cudaError_t status;
 	if ((status = cudaMalloc(&gpu_A, sizeof(A))) != 0) {
@@ -49,14 +49,14 @@ int main(int argc, char* argv[]) {
 		printf("memcpy B -> gpu_B: %s\n", cudaGetErrorString(status));
 	}
 
-	hadd_m(gpu_A, gpu_B, gpu_C);
+	hadd_m(2, 3, gpu_A, gpu_B, gpu_C);
 
 	if ((status = cudaMemcpy(C, gpu_C, sizeof(C), cudaMemcpyDeviceToHost)) != 0) {
 		printf("memcpy gpu_C -> C: %s\n", cudaGetErrorString(status));
 	}
 	for (int m = 0; m < 2; m++) {
 		for (int n = 0; n < 3; n++) {
-			printf("%f ", C[n + (3 * m)]);
+			printf("%f ", C[n + (3 * m)].x);	//print the unsigned short representation
 		}
 		printf("\n");
 	}
