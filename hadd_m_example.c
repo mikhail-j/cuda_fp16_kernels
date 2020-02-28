@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2017 Qijia (Michael) Jin
+Copyright (C) 2017-2020 Qijia (Michael) Jin
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -33,30 +33,30 @@ int main(int argc, char* argv[]) {
 	unsigned short B[6] = {0x0000, 0x3c00, 0x4000, 0x4200, 0x4400, 0x4500};
 	__half C[6];
 	cudaError_t status;
-	if ((status = cudaMalloc(&gpu_A, sizeof(A))) != 0) {
+	if ((status = cudaMalloc(&gpu_A, (sizeof(__half) * 6))) != 0) {
 		printf("gpu_A: %s\n", cudaGetErrorString(status));
 	}
-	if ((status = cudaMalloc(&gpu_B, sizeof(B))) != 0) {
+	if ((status = cudaMalloc(&gpu_B, (sizeof(__half) * 6))) != 0) {
 		printf("gpu_B: %s\n", cudaGetErrorString(status));
 	}
-	if ((status = cudaMalloc(&gpu_C, sizeof(C))) != 0) {
+	if ((status = cudaMalloc(&gpu_C, (sizeof(__half) * 6))) != 0) {
 		printf("gpu_C: %s\n", cudaGetErrorString(status));
 	}
-	if ((status = cudaMemcpy(gpu_A, A, sizeof(A), cudaMemcpyHostToDevice)) != 0) {
+	if ((status = cudaMemcpy(gpu_A, A, (sizeof(__half) * 6), cudaMemcpyHostToDevice)) != 0) {
 		printf("memcpy A -> gpu_A: %s\n", cudaGetErrorString(status));
 	}
-	if ((status = cudaMemcpy(gpu_B, B, sizeof(B), cudaMemcpyHostToDevice)) != 0) {
+	if ((status = cudaMemcpy(gpu_B, B, (sizeof(__half) * 6), cudaMemcpyHostToDevice)) != 0) {
 		printf("memcpy B -> gpu_B: %s\n", cudaGetErrorString(status));
 	}
 
 	hadd_m(2, 3, gpu_A, gpu_B, gpu_C);
 
-	if ((status = cudaMemcpy(C, gpu_C, sizeof(C), cudaMemcpyDeviceToHost)) != 0) {
+	if ((status = cudaMemcpy(C, gpu_C, (sizeof(__half) * 6), cudaMemcpyDeviceToHost)) != 0) {
 		printf("memcpy gpu_C -> C: %s\n", cudaGetErrorString(status));
 	}
 	for (int m = 0; m < 2; m++) {
 		for (int n = 0; n < 3; n++) {
-			printf("%f ", C[n + (3 * m)].x);	//print the unsigned short representation
+			printf("%f ", __half2float(C[n + (3 * m)]));	//print the unsigned short representation
 		}
 		printf("\n");
 	}
